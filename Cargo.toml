@@ -1,0 +1,7 @@
+[package]
+name = "Garmin-Music-Manager"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libmtp-rs = "0.7.7"
