@@ -58,7 +58,7 @@ fn main() {
         
         for track in fs::read_dir(playlist.path()).unwrap().flatten() {
             
-            let tag = Tag::new().read_from_path(track.path()).unwrap();
+            let tag = Tag::new().read_from_path(track.path());
             let file_name = match track.file_name().into_string() {
                 Ok(s) => s,
                 Err(_) => String::from("Unknown.mp3")
@@ -68,8 +68,16 @@ fn main() {
                 continue;
             }
             println!("  Found {}", file_name);
-            let artist = adjust_file_name(tag.artist().unwrap_or("Unknown").to_owned());
-            let album = adjust_file_name(tag.album_title().unwrap_or("Unknown").to_owned());
+            let artist;
+            let album;
+            if let Ok(tag) = tag {
+                artist = adjust_file_name(tag.artist().unwrap_or("Unknown").to_owned());
+                album = adjust_file_name(tag.album_title().unwrap_or("Unknown").to_owned());
+            } else {
+                println!("Could not read tag of {}", file_name);
+                artist = String::from("Unknown");
+                album = String::from("Unknown");
+            };
 
             upload_tracks
             .entry(artist.clone()).or_default()
