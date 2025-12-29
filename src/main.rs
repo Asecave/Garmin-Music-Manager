@@ -83,7 +83,8 @@ fn main() {
             .entry(artist.clone()).or_default()
             .entry(album.clone()).or_default().push(track);
 
-            let track_path_on_watch = format!("0:/music/{}/{}/{}", artist, album, file_name).to_uppercase();
+            let track_path_on_watch = format!("0:/music/{}/{}/{}", artist, album, file_name).to_ascii_uppercase();
+            println!("{}", &track_path_on_watch);
             upload_playlist.push(track_path_on_watch);
         }
 
@@ -252,11 +253,12 @@ fn main() {
 }
 
 fn adjust_file_name(name: String) -> String {
-    return name.replace(|c: char| {
+    let n = name.replace(|c: char| {
         let alphanumeric = c.is_ascii_alphanumeric();
         let exclude = [' ', '.', '(', ')'];
         !(alphanumeric || exclude.contains(&c))
-    }, "_");
+    }, "_").trim().to_string();
+    if n.is_empty() {String::from("Unknown")} else {n}
 }
 
 fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
