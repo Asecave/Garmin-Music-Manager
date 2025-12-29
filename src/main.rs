@@ -61,7 +61,7 @@ fn main() {
             let tag = Tag::new().read_from_path(track.path());
             let file_name = match track.file_name().into_string() {
                 Ok(s) => s,
-                Err(_) => String::from("Unknown.mp3")
+                Err(_) => continue
             };
             if !file_name.to_lowercase().ends_with("mp3") {
                 println!("{} is not an mp3, skipping", file_name);
@@ -280,7 +280,10 @@ fn adjust_all_metadata(src: impl AsRef<Path>) -> io::Result<()> {
         if ty.is_dir() {
             adjust_all_metadata(entry.path())?;
         } else {
-            let mut tag = Tag::new().read_from_path(entry.path()).unwrap();
+            let mut tag = match Tag::new().read_from_path(entry.path()) {
+                Ok(t) => t,
+                Err(_) => return Ok(())
+            };
             tag.remove_album_cover();
             tag.remove_disc();
             tag.remove_disc_number();
