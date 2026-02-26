@@ -60,7 +60,7 @@ fn main() {
             
             let tag = Tag::new().read_from_path(track.path());
             let file_name = match track.file_name().into_string() {
-                Ok(s) => s,
+                Ok(s) => adjust_file_name(s),
                 Err(_) => continue
             };
             if !file_name.to_lowercase().ends_with("mp3") {
@@ -83,8 +83,7 @@ fn main() {
             .entry(artist.clone()).or_default()
             .entry(album.clone()).or_default().push(track);
 
-            let track_path_on_watch = format!("0:/music/{}/{}/{}", artist, album, file_name).to_ascii_uppercase();
-            println!("{}", &track_path_on_watch);
+            let track_path_on_watch = format!("0:/music/{}/{}/{}", artist, album, file_name);
             upload_playlist.push(track_path_on_watch);
         }
 
